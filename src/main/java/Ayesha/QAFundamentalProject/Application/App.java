@@ -116,7 +116,8 @@ public class App {
 			switch (menuOptions) {
 
 			case 1: // Root access menu
-				System.out.println("What would you like to do? (Please enter the number which corresponds to your chosen option)");
+				System.out.println(
+						"What would you like to do? (Please enter the number which corresponds to your chosen option)");
 				System.out.println("Users - 1");
 				System.out.println("Customers - 2");
 				System.out.println("Orders - 3");
@@ -480,7 +481,8 @@ public class App {
 				break;
 
 			case 2: // User not registered as a customer
-				System.out.println("What would you like to do? (Please enter the number which corresponds to your chosen option)");
+				System.out.println(
+						"What would you like to do? (Please enter the number which corresponds to your chosen option)");
 				System.out.println("Customer Registration - 1");
 				System.out.println("Browse Catalogue - 2");
 				System.out.println("My Account - 3");
@@ -494,11 +496,23 @@ public class App {
 					break;
 
 				case 1: // Customer Registration
-					
+					System.out.println("Are you sure you want to register as a new customer? (y/n)");
+					if (Scan.input().equalsIgnoreCase("y")) {
+						Customer newCust = Controls.addNewCustomer();
+						System.out.println("Are these customer details correct? (y/n)");
+						System.out.println(newCust);
+						if (Scan.input().equalsIgnoreCase("y")) {
+							user.registerAsCustomer(newCust);
+							System.out.println("Customer registered successfuly!");
+							menuOptions = 3;
+						} else {
+							System.out.println("Customer not registered: details have been discarded");
+						}
+					}
 					break;
 
 				case 2: // Browse Catalogue
-					
+					Controls.browse();
 					break;
 
 				case 3: // Account Options
@@ -510,13 +524,13 @@ public class App {
 					case 0: // Back
 						break;
 					case 1: // View Profile
-						
+						System.out.println(User.searchUsers(user.getUsername()));
 						break;
 					case 2: // Change Username
-						
+						Controls.changeUsername(user);
 						break;
 					case 3: // Change Password
-						
+						Controls.changePassword(user);
 						break;
 					default:
 						System.out.println("Please enter a valid option!");
@@ -532,7 +546,8 @@ public class App {
 				break;
 
 			case 3: // Registered customer
-				System.out.println("What would you like to do? (Please enter the number which corresponds to your chosen option)");
+				System.out.println(
+						"What would you like to do? (Please enter the number which corresponds to your chosen option)");
 				System.out.println("Browse Catalogue - 1");
 				System.out.println("Basket - 2");
 				System.out.println("My Account - 3");
@@ -546,7 +561,7 @@ public class App {
 					break;
 
 				case 1: // Browse Catalogue
-					
+					Controls.browse();
 					break;
 
 				case 2: // Basket Options
@@ -560,19 +575,68 @@ public class App {
 					case 0: // Back
 						break;
 					case 1: // View Basket
-						
+						user.getCustomerProfile().viewBasket();
 						break;
 					case 2: // Add item to Basket
-						
+						Controls.browse();
+						System.out.println("Please enter the ID of the item you would like to add:");
+						int addItemID = Controls.Selector();
+						Item item = Item.searchItem(addItemID);
+						System.out.println("How many " + item.getItemName() + " would you like to add? ("
+								+ item.getItemStock() + " available)");
+						int quantity = Controls.Selector();
+						System.out.println(quantity + " " + item.getItemName() + " (Subtotal = £"
+								+ quantity * item.getItemPrice() + ") will be added to your basket");
+						System.out.println("Is this correct? (y/n)");
+						if (Scan.input().equalsIgnoreCase("y")) {
+							user.getCustomerProfile().addToBasket(addItemID, quantity);
+							System.out.println("Item added successfully!");
+						} else {
+							System.out.println("Item has not been added!");
+						}
 						break;
 					case 3: // Remove item from Basket
-						
+						user.getCustomerProfile().viewBasket();
+						System.out.println("Please enter the ID of the item you would like to remove:");
+						int rmvItemID = Controls.Selector();
+						System.out.println("Are you sure you want to remove " + Item.searchItem(rmvItemID).getItemName()
+								+ " from your basket? (y/n)");
+						if (Scan.input().equalsIgnoreCase("y")) {
+							user.getCustomerProfile().removeFromBasket(rmvItemID);
+							System.out.println("Item successfully removed!");
+						} else {
+							System.out.println("Item has not been removed!");
+						}
 						break;
 					case 4: // Change quantity of item in basket
-						
+						user.getCustomerProfile().viewBasket();
+						System.out.println("Please enter the ID of the item whose quantity you want to change:");
+						int updItemID = Controls.Selector();
+						System.out.println("What would you like to change the quantity to?");
+						int newQuantity = Controls.Selector();
+						System.out.println("Are you sure you want to update the quantity of "
+								+ Item.searchItem(updItemID).getItemName() + " to " + newQuantity + "? (y/n)");
+						if (Scan.input().equalsIgnoreCase("y")) {
+							user.getCustomerProfile().removeFromBasket(updItemID);
+							user.getCustomerProfile().addToBasket(updItemID, newQuantity);
+							System.out.println("Quantity has been changed successfully!");
+						} else {
+							System.out.println("Quantity has not been changed");
+						}
 						break;
 					case 5: // Checkout
-						
+						user.getCustomerProfile().viewBasket();
+						System.out.println(
+								"Are you sure you want to check out? (y/n) An order will be placed for the items in your basket...");
+						if (Scan.input().equalsIgnoreCase("y")) {
+							ArrayList<Item> basket = user.getCustomerProfile().getBasket();
+							user.getCustomerProfile().placeOrder(basket);
+							user.getCustomerProfile().clearBasket();
+							System.out.println(
+									"Your order has been placed! (Go to My Account > My Orders to view processed orders)");
+						} else {
+							System.out.println("Your order has not yet been placed, feel free to continue shopping");
+						}
 						break;
 					default:
 						System.out.println("Please enter a valid option!");
@@ -591,19 +655,50 @@ public class App {
 					case 0: // Back
 						break;
 					case 1: // View Orders
-						
+						List<Integer> IDs = new ArrayList<Integer>();
+						String sql = "SELECT OID FROM orders WHERE fk_customer_id = "
+								+ user.getCustomerProfile().getCustomerID();
+						try {
+							ResultSet rs = Database.queryDatabase(sql);
+							if (!rs.isBeforeFirst()) {
+								System.out.println("Your basket is empty!");
+								break;
+							}
+							while (rs.next()) {
+								int ID = rs.getInt("order_id");
+								IDs.add(ID);
+							}
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+						for (int ID : IDs) {
+							System.out.println(Order.search(ID));
+							System.out.println("Order Total = £" + Order.total(ID));
+						}
 						break;
 					case 2: // View Profile
-						
+						System.out.println(User.searchUsers(user.getUsername()));
 						break;
 					case 3: // Change Username
-						
+						Controls.changeUsername(user);
 						break;
 					case 4: // Change Password
-						
+						Controls.changePassword(user);
 						break;
 					case 5: // Update Customer Profile
-						
+						System.out.println("Are you sure you wish to update your details? (y/n)");
+						if (Scan.input().equalsIgnoreCase("y")) {
+							Customer customerUpdate = Controls.addNewCustomer();
+							System.out.println("New details: " + customerUpdate);
+							System.out.println("Are these new details correct? (y/n)");
+							if (Scan.input().equalsIgnoreCase("y")) {
+								customerUpdate.updateCustomer(user.getCustomerProfile().getCustomerID());
+								user.setCustomerProfile(customerUpdate);
+								System.out.println("Customer profile successfully updated!");
+							} else {
+								System.out.println("Customer profile has not been updated!");
+							}
+						}
 						break;
 
 					default:
