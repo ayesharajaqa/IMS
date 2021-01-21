@@ -19,7 +19,7 @@ To run the application backend you will need to run the following lines of code
 ```sh
 git clone https://github.com/ayesharajaqa/ims
 cd ims-server/server
-mvn spring-boot:run
+mvn run
 ```
 ## Production
 To change the configuration for this application, check the server/src/main/resources/application.properties.
