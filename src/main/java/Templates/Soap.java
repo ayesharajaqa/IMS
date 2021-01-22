@@ -114,7 +114,7 @@ public class Soap extends Item{
 		String soapScent = this.getSoapScent();
 		String soapType = this.getSoapType();
 		
-		String addSoap = "INSET INTO soaps (soap_name, soap_colour, soap_scent, soap_type) VALUES (\"" + soapName + "\", \"" + soapColour + "\", \"" + soapScent + "\", \"" + soapType + "\")";
+		String addSoap = "INSERT INTO soaps (soap_name, soap_colour, soap_scent, soap_type) VALUES (\"" + soapName + "\", \"" + soapColour + "\", \"" + soapScent + "\", \"" + soapType + "\")";
 	
 		String retrieveSoapID = "SELECT soap_id FROM soaps ORDER BY soap_id DESC LIMIT 1";
 		

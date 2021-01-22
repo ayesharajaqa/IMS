@@ -116,8 +116,7 @@ public class App {
 			switch (menuOptions) {
 
 			case 1: // Root access menu
-				System.out.println(
-						"What would you like to do? (Please enter the number which corresponds to your chosen option)");
+				System.out.println("What would you like to do? (Please enter the number which corresponds to your chosen option)");
 				System.out.println("Users - 1");
 				System.out.println("Customers - 2");
 				System.out.println("Orders - 3");
@@ -427,7 +426,7 @@ public class App {
 					}
 					break;
 
-				case 5: // Plants
+				case 5: // Soaps
 					System.out.println("Create Soap - 1");
 					System.out.println("View Soaps - 2");
 					System.out.println("Update Soap - 3");
@@ -679,7 +678,7 @@ public class App {
 					case 2: // View Profile
 						System.out.println(User.searchUsers(user.getUsername()));
 						break;
-					case 3: // Change Username
+					case 3: // Change username
 						Controls.changeUsername(user);
 						break;
 					case 4: // Change Password

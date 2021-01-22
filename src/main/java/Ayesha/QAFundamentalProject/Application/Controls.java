@@ -81,12 +81,13 @@ public class Controls {
 		newSoap.setSoapColour(Scan.input());
 		System.out.println("Please enter the scent of the soap:");
 		newSoap.setSoapScent(Scan.input());
-		System.out.println("Please enter the type of the soap:");
+		System.out.println("Please enter the type of the soap (Bar|Cake Slice|Cupcake):");
 		newSoap.setSoapType(Scan.input());
 		System.out.println("Enter the price:");
 		newSoap.setItemPrice(Float.parseFloat(Scan.input()));
 		System.out.println("Enter the stock availability:");
 		newSoap.setItemStock(Selector());
+		System.out.println("Is this soap correct? (y/n)" + newSoap);
 		return newSoap;
 	}
 	
